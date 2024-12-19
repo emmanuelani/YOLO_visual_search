@@ -2,67 +2,66 @@ from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 import uvicorn
 from ultralytics import YOLO
-# import requests
-
 import io
+import numpy as np
 
-# initializing the fastAPI app
+# Initializing the FastAPI app
 app = FastAPI(
-    title="Visual Search API-4",
+    title="Visual Search API-2",
     description="This is the API that will be used for the visual search feature",
 )
 
-# loading model
+# Load the YOLO model
 model = YOLO("vision_model.pt")
 
-# categories
+# Categories
 classes = model.names
 
 
-# @app.get("/")
-# def hello():
-#     return {"Message": "Hello World!"}
+@app.on_event("startup")
+def startup():
+    print("Application starting!")
 
 
-# @app.on_event("startup")
-# def startup():
-#     print("Application starting!")
-
-
-# getting the output from the model's prediction
-@app.post("/read_file/")
-async def read_file(file: UploadFile = File(...)):
-    # check the file type
+# Make the prediction using the fine-tuned YOLO model
+@app.post("/predict/")
+async def predict(file: UploadFile = File(...)):
+    # Check the file type
     if file.content_type not in ["image/jpeg", "image/png"]:
         return {"error": "Invalid file type. Please upload a JPEG or PNG image."}
-    print("Done!")
-    # contents = await file.read()
-    # return contents
-    # try:
-    #     contents = await file.read()
-    #     image = Image.open(io.BytesIO(contents))
-    #     image.verify()
-    #     # image_tensor = transform(image).unsqueeze(0)  # Add batch dimension
-    # except Exception as e:
-    #     return {"error": "Failed to process the image.", "details": str(e)}
 
-    # return image
+    try:
+        # Read and process the image
+        contents = await file.read()
+        image = Image.open(io.BytesIO(contents))
+        image = image.convert("RGB")  # Ensure compatibility with YOLO
 
+        # Convert the image to a NumPy array
+        image_array = np.array(image)
 
-# make the prediction using the fine-tuned YOLO model
-# @app.post("/predict/")
-# async def predict():
-#     image = await read_file()
-#     result = model.predict(image)
-#     pred_id = result[0].boxes.cls
+        # Run the YOLO model on the image
+        results = model.predict(image_array)
 
-#     # extracting the product class name
-#     for id, category in classes.items():
-#         if pred_id == id:
-#             return category
+        # Extract predictions
+        predictions = []
+        for box in results[0].boxes:
+            class_id = int(box.cls)  # Class index
+            category = classes.get(class_id, "Unknown")
+            predictions.append(
+                {
+                    "class_id": class_id,
+                    "category": category,
+                    "confidence": float(box.conf),
+                    "bbox": box.xyxy.tolist(),  # Bounding box coordinates
+                }
+            )
 
-# output = predict(image)
-# # print(output)
+        return {"predictions": predictions}
+    except Exception as e:
+        return {
+            "error": "Failed to process the image or make predictions.",
+            "details": str(e),
+        }
 
 
 if __name__ == "__main__":
