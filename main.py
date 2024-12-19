@@ -7,7 +7,7 @@ import numpy as np
 
 # Initializing the FastAPI app
 app = FastAPI(
-    title="Visual Search API-2",
+    title="Visual Search API-1",
     description="This is the API that will be used for the visual search feature",
 )
 
@@ -41,22 +41,13 @@ async def predict(file: UploadFile = File(...)):
 
         # Run the YOLO model on the image
         results = model.predict(image_array)
+        pred_id = results[0].boxes.cls
 
-        # Extract predictions
-        predictions = []
-        for box in results[0].boxes:
-            class_id = int(box.cls)  # Class index
-            category = classes.get(class_id, "Unknown")
-            predictions.append(
-                {
-                    "class_id": class_id,
-                    "category": category,
-                    "confidence": float(box.conf),
-                    "bbox": box.xyxy.tolist(),  # Bounding box coordinates
-                }
-            )
+        # extracting the product class name
+        for id, category in classes.items():
+            if pred_id == id:
+                return category
 
-        return {"predictions": predictions}
     except Exception as e:
         return {
             "error": "Failed to process the image or make predictions.",
