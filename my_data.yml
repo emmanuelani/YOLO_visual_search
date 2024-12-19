@@ -1,0 +1,22 @@
+names:
+- air-conditioner
+- back-pack
+- blender
+- female-dress
+- female-shoe
+- hand-bag
+- hoodie
+- iron
+- laptop
+- male-shirt
+- male-shoe
+- male-short
+- microwave
+- phone
+- refridgerator
+- sneaker
+- washing-machine
+- wrist-watch
+nc: 18
+train: C:\Users\Manuel\Desktop\Visual search gig\labelled_dataset\images\train
+val: C:\Users\Manuel\Desktop\Visual search gig\labelled_dataset\images\val
