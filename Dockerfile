@@ -1,14 +1,29 @@
 # Use the official Python image as the base image
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 # Set the working directory in the container
 WORKDIR /main
 
-# Copy the requirements file to the container
-COPY requirements.txt .
+RUN pip install --default-timeout=300 poetry
 
-# Install dependencies
-RUN pip install -r requirements.txt
+# Copy only requirements to cache them in docker layer
+COPY pyproject.toml poetry.lock* /main/
+
+# Project initialization:
+RUN poetry config virtualenvs.create false \
+    && poetry lock --no-update \
+    && pip install --default-timeout=300 torch\
+    && poetry install --no-interaction --no-ansi
+
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN pip install uvicorn
+RUN pip install fastapi
+RUN pip install python-multipart
+
 
 # Copy the application code to the container
 COPY . .
@@ -17,4 +32,4 @@ COPY . .
 EXPOSE 5000
 
 # Command to run the application
-CMD ["uvicorn", "main:app", "--host", "localhost", "--port", "5000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
