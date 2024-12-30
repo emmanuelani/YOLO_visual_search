@@ -12,18 +12,12 @@ COPY pyproject.toml poetry.lock* /main/
 # Project initialization:
 RUN poetry config virtualenvs.create false \
     && poetry lock --no-update \
-    && pip install --default-timeout=300 torch\
-    && poetry install --no-interaction --no-ansi
+    && poetry install
 
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
     libglib2.0-0 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN pip install uvicorn
-RUN pip install fastapi
-RUN pip install python-multipart
-
 
 # Copy the application code to the container
 COPY . .
