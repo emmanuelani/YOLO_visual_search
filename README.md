@@ -16,7 +16,7 @@ The above code will build a docker image which you can now run on your system.
 
 The app takes in an image, processes it and pass it to the model which then predcits the image category.
 
-Alternatively, you can just run it locally by running this code
+### _Alternatively, you can just run it locally by running this code_
 
 ```python
 git clone https://github.com/emmanuelani/YOLO_visual_search
