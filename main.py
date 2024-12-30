@@ -26,10 +26,9 @@ def startup():
 # Make the prediction using the fine-tuned YOLO model
 @app.post("/predict/")
 async def predict(file: UploadFile = File(...)):
-    # Check the file type
-    if file.content_type not in ["image/jpeg", "image/png"]:
-        return {"error": "Invalid file type. Please upload a JPEG or PNG image."}
-
+    # # Check the file type
+    # if file.content_type not in ["image/jpeg", "image/png"]:
+    #     return {"error": "Invalid file type. Please upload a JPEG or PNG image."}
     try:
         # Read and process the image
         contents = await file.read()
@@ -56,4 +55,4 @@ async def predict(file: UploadFile = File(...)):
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)
+    uvicorn.run("main:app", host="localhost", port=5000, reload=True)
