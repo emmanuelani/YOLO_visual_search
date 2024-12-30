@@ -8,8 +8,18 @@ It currently can classify e-commerce images into 18 categories with the possibil
 git clone https://github.com/emmanuelani/YOLO_visual_search
 
 docker build -t my-app .
+
+docker run my-app
 ```
 
 The above code will build a docker image which you can now run on your system.
 
 The app takes in an image, processes it and pass it to the model which then predcits the image category.
+
+Alternatively, you can just run it locally by running this code
+
+```python
+git clone https://github.com/emmanuelani/YOLO_visual_search
+
+python main.py
+```
