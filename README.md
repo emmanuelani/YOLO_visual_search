@@ -3,7 +3,7 @@
 This repo contains a fine-tuned YOLOv8 model on e-commerce images spanning across difference categories.
 It currently can classify e-commerce images into 18 categories with the possibility of incrreasing the number of categories in future iterations.
 
-### _To use this API, copy and run this code in your terminal_
+### _To use this API, copy and run these commands in your terminal_
 ```python
 git clone https://github.com/emmanuelani/YOLO_visual_search
 
@@ -16,7 +16,7 @@ The above code will build a docker image which you can now run on your system.
 
 The app takes in an image, processes it and pass it to the model which then predcits the image category.
 
-### _Alternatively, you can just run it locally by running this code_
+### _Alternatively, you can just run it locally on your system by running these commands_
 
 ```python
 git clone https://github.com/emmanuelani/YOLO_visual_search
