@@ -5,14 +5,14 @@ FROM python:3.12-slim
 WORKDIR /main
 
 RUN pip install --default-timeout=300 poetry
+RUN pip install uvicorn 
 
 # Copy only requirements to cache them in docker layer
 COPY pyproject.toml poetry.lock* /main/
 
 # Project initialization:
 RUN poetry config virtualenvs.create false \
-    && poetry lock --no-update \
-    && poetry install
+    && poetry install --no-root
 
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 COPY . .
 
 # Expose the port your FastAPI app runs on
-EXPOSE 5000
+EXPOSE 7000
 
 # Command to run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7000", "--reload"]
